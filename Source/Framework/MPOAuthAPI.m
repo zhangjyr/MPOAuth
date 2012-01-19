@@ -72,8 +72,8 @@ NSString * const MPOAuthAuthenticationURLKey		= @"MPOAuthAuthenticationURL";
 
 - (id)initWithCredentials:(NSDictionary *)inCredentials withConfiguration:(NSDictionary *)inConfiguration autoStart:(BOOL)aFlag {
 	if ((self = [super init])) {
-		self.authenticationURL = [inConfiguration valueForKey:MPOAuthAuthenticationURLKey];
-		self.baseURL = [inConfiguration valueForKey:MPOAuthBaseURLKey];
+		self.authenticationURL = [[NSURL alloc] initWithString:[inConfiguration valueForKey:MPOAuthAuthenticationURLKey]];
+		self.baseURL = [[NSURL alloc] initWithString:[inConfiguration valueForKey:MPOAuthBaseURLKey]];
 		self.authenticationState = MPOAuthAuthenticationStateUnauthenticated;
 		credentials_ = [[MPOAuthCredentialConcreteStore alloc] initWithCredentials:inCredentials forBaseURL:self.baseURL withAuthenticationURL:self.authenticationURL];
 		self.authenticationMethod = [[MPOAuthAuthenticationMethod alloc] initWithAPI:self forURL:self.authenticationURL withConfiguration:inConfiguration];				

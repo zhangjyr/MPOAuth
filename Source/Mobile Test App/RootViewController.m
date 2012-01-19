@@ -14,6 +14,9 @@
 
 #define kConsumerKey		@"key"
 #define kConsumerSecret		@"secret"
+#define kOAuthRequest       @"http://api.t.sina.com.cn/oauth/request_token"
+#define kOAuthAuthorize     @"http://api.t.sina.com.cn/oauth/authorize"
+#define kOAuthExchange      @"http://api.t.sina.com.cn/oauth/access_token"
 
 @implementation RootViewController
 
@@ -39,19 +42,27 @@
 
 - (void)viewDidAppear:(BOOL)animated {
 	if (!_oauthAPI) {
-		NSDictionary *credentials = [NSDictionary dictionaryWithObjectsAndKeys:	kConsumerKey, kMPOAuthCredentialConsumerKey,
+		NSDictionary *credentials = [NSDictionary dictionaryWithObjectsAndKeys:
+                                     kConsumerKey, kMPOAuthCredentialConsumerKey,
 									 kConsumerSecret, kMPOAuthCredentialConsumerSecret,
 									 nil];
+        NSDictionary *addrs = [NSDictionary dictionaryWithObjectsAndKeys: 
+                               @"http://api.t.sina.com.cn/oauth/", MPOAuthAuthenticationURLKey,
+                               @"http://api.t.sina.com.cn/", MPOAuthBaseURLKey,
+                               kOAuthRequest, MPOAuthRequestTokenURLKey,
+                               kOAuthAuthorize, MPOAuthUserAuthorizationURLKey,
+                               kOAuthExchange, MPOAuthAccessTokenURLKey,
+                               nil];
 		_oauthAPI = [[MPOAuthAPI alloc] initWithCredentials:credentials
-										  authenticationURL:[NSURL URLWithString:@"https://twitter.com/oauth/"]
-												 andBaseURL:[NSURL URLWithString:@"https://twitter.com/"]];
+                                          withConfiguration:addrs
+                                                  autoStart:NO];
 		
 		if ([[_oauthAPI authenticationMethod] respondsToSelector:@selector(setDelegate:)]) {
 			[(MPOAuthAuthenticationMethodOAuth *)[_oauthAPI authenticationMethod] setDelegate:(id <MPOAuthAuthenticationMethodOAuthDelegate>)[UIApplication sharedApplication].delegate];
 		}
-	} else {
-		[_oauthAPI authenticate];
-	}
+	} 
+    
+    [_oauthAPI authenticate];
 }
 
 - (void)requestTokenReceived:(NSNotification *)inNotification {

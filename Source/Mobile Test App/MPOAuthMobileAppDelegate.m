@@ -46,18 +46,19 @@
 }
 
 - (NSString *)oauthVerifierForCompletedUserAuthorization {
-	return oauthVerifier_;
+	return self.oauthVerifier;
 }
 
 - (BOOL)automaticallyRequestAuthenticationFromURL:(NSURL *)inAuthURL withCallbackURL:(NSURL *)inCallbackURL {
 	return YES;
 }
- 
-- (BOOL)application:(UIApplication *)application handleOpenURL:(NSURL *)url {
+
+- (BOOL)application:(UIApplication *)application openURL:(NSURL *)url sourceApplication:(NSString *)sourceApplication annotation:(id)annotation {
+    
 	// the url is the callback url with the query string including oauth_token and oauth_verifier in 1.0a
 	if ([[url host] isEqualToString:@"success"] && [url query].length > 0) {
 		NSDictionary *oauthParameters = [MPURLRequestParameter parameterDictionaryFromString:[url query]];
-		oauthVerifier_ = [oauthParameters objectForKey:@"oauth_verifier"];
+		self.oauthVerifier = [oauthParameters objectForKey:@"oauth_verifier"];
 	}
 	 
 	return YES;
